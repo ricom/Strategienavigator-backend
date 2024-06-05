@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Events\LiveSaveUpdate;
 use App\Http\Resources\SaveResource;
 use App\Http\Resources\SimpleSaveResource;
+use App\Models\LastVisitedSaves;
 use App\Models\Save;
+use App\Models\User;
 use App\Policies\SavePolicy;
 use App\Services\SaveResourceService;
 use Carbon\Carbon;
+use Carbon\Traits\Date;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -61,18 +64,6 @@ class SaveController extends Controller
         $this->authorize("viewAny", Save::class);
 
         return SimpleSaveResource::collection(Save::with("contributors")->paginate());
-    }
-
-    /**
-     * @return AnonymousResourceCollection
-     * @throws AuthorizationException
-     * @see Save
-     */
-    public function indexLast(): AnonymousResourceCollection
-    {
-        $this->authorize("viewAny", Save::class);
-
-        return SimpleSaveResource::collection(Save::orderBy("last_opened", "DESC")->limit(4)->get());
     }
 
     /** Erstellt einen neuen Speicherstand
@@ -129,9 +120,14 @@ class SaveController extends Controller
      */
     public function show(Request $request, Save $save): SaveResource
     {
-        $user = $request->user();
         $this->authorize("view", $save);
+        /**
+         * @var User $user
+         */
+        $user = $request->user();
         $save->last_opened = Carbon::now();
+        $user->lastOpenedSavesDesc()->syncWithoutDetaching([$save->id => ['visited_at' => Carbon::now()]]);
+
         if ($save->isContributor($user)) {
             $save->setRelation('pivot', $user->sharedSaves()->where('save_id', $save->id)->first());
         }

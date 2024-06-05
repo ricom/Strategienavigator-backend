@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\LastVisitedSaves;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
@@ -39,7 +40,10 @@ class SimpleSaveResource extends JsonResource
             /*"contributors" => $this->contributors->map(function ($c) {
                 return $c->id;
             })->toArray()*/
-            "resources" => SaveResourceDescriptorResource::collection($this->saveResources)
+            "resources" => SaveResourceDescriptorResource::collection($this->saveResources),
+            "last_opened_by_user" => $this->whenPivotLoaded(new LastVisitedSaves, function () {
+                return $this->pivot->visited_at;
+            })
         ];
     }
 }

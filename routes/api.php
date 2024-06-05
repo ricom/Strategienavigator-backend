@@ -53,7 +53,6 @@ Route::group(["middleware" => ["auth:api", "activityLog"]], function () {
 
     // Save
     Route::post("/saves/{save}/broadcast", [SaveController::class, "broadcastPatches"]);
-    Route::get("/saves/index/last", [SaveController::class, "indexLast"]);
 
     // Settings
     Route::apiResource('settings', SettingController::class)->only(["index", "show"]);
@@ -72,6 +71,7 @@ Route::group(["middleware" => ["auth:api", "activityLog"]], function () {
 
     // Users
     Route::get('users/{user}/saves', [\App\Http\Controllers\UserSavesController::class, 'index']);
+    Route::get('users/{user}/saves/last', [\App\Http\Controllers\UserSavesController::class, 'indexLast']);
     Route::get('users/search', [UserController::class, 'searchUser']);
     Route::post('/user/port', [UserController::class, 'portAnonymousUser']);
     Route::apiResource('users', UserController::class)->except('store');

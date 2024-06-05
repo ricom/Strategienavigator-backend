@@ -24,13 +24,24 @@ class UserPolicy
     /**
      * Alle User können jeden User anschauen
      *
-     * @param User $user Der aktuelle authentifizierte User
+     * @param User $user Der aktuell authentifizierter User
      * @param User $model Der User der angeschaut werden soll
      * @return boolean Ob der authentifizierte User den User anschauen darf
      */
     public function view(User $user, User $model): bool
     {
         return true;
+    }
+
+    /**
+     * Nur der user selbst, kann seine zuletzt geöffneten Speicherstände ansehen.
+     * @param User $user Der aktuell authentifizierter User
+     * @param User $model Der User vom dem die letzten Speicherstände angeschaut werden sollen
+     * @return bool
+     */
+    public function viewLast(User $user, User $model): bool
+    {
+        return $user->id == $model->id;
     }
 
     /**

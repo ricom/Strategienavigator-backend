@@ -190,6 +190,13 @@ class User extends Authenticatable
         return $this->hasMany(SharedSave::class);
     }
 
+    public function lastOpenedSavesDesc(): BelongsToMany
+    {
+        return $this->belongsToMany(Save::class, LastVisitedSaves::class)
+            ->withPivot("visited_at")
+            ->orderByPivot("visited_at", "desc");
+    }
+
     /**
      * Ale Speicherstände zu den dieser User Zugriff hat
      * @param bool $withPivot Ob die Pivot Tabelle mitgeladen werden soll

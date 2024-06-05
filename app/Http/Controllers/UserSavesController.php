@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\PermissionHelper;
 use App\Http\Resources\SimpleSaveResource;
 use App\Models\Save;
 use App\Models\SharedSave;
@@ -90,5 +91,37 @@ class UserSavesController extends Controller
         }
 
         return SimpleSaveResource::collection($saves);
+    }
+
+    /**
+     * Gibt die zuletzt geöffneten Speicherstände des gegeben Users zurück.
+     *
+     * Speicherstände die nicht für den aktuell authentifizierten User sichbar sind, werden ausgeblendet.
+     *
+     * @param Request $request Der Request
+     * @param User $user Der gegeben User
+     * @return AnonymousResourceCollection Maximal 4 SimpleSaveResource
+     * @throws AuthorizationException Wenn der aktuell authentifizierte User nicht berechtigt ist, die Speicherstände des gegeben Nutzers anzuschauen.
+     */
+    public function indexLast(Request $request, User $user)
+    {
+
+        $this->authorize("viewLast", $user);
+
+        $authenticatedUser = $request->user();
+
+        $lastOpenedSaves = $user->lastOpenedSavesDesc()->limit(4)->get();
+
+        $visibleSaves = collect();
+
+        /** @var Save $save */
+        foreach ($lastOpenedSaves as $save) {
+            // only the authenticatedUser is checked, because he can see, that the given user did at some point in time opened the given save.
+            if ($save->hasAtLeasPermission($authenticatedUser, PermissionHelper::$PERMISSION_READ)) {
+                $visibleSaves->add($save);
+            }
+        }
+
+        return SimpleSaveResource::collection($visibleSaves);
     }
 }
