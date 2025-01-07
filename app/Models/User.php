@@ -74,13 +74,18 @@ class User extends Authenticatable
     use HasFactory, HasApiTokens, SoftDeletes, Limitable;
 
     /**
+     * @var \Illuminate\Support\HigherOrderCollectionProxy|mixed
+     */
+
+    /**
      * Attribute, welche Massen zuweisbar sind
      *
      * @var array
      */
     protected $fillable = [
         'username',
-        'description'
+        'description',
+        'password'
     ];
 
     /**
@@ -228,5 +233,8 @@ class User extends Authenticatable
         return $this->hasMany(UserSetting::class)->where("setting_id", "=", $setting_id)->firstOrFail();
     }
 
-
+    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
 }

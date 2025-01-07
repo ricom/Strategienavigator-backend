@@ -80,3 +80,4 @@ Route::group(["middleware" => ["auth:api", "activityLog"]], function () {
     Route::get('saves/{save}/invitation-links', [InvitationLinkController::class, "saveIndex"]);
     Route::put('invitation-link/{token}/accept', [InvitationLinkController::class, "acceptInvite"]);
 });
+

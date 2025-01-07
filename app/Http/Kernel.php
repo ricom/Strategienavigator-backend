@@ -3,9 +3,11 @@
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckMaintenanceMode;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\UserLastActivityLog;
@@ -39,12 +41,14 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
+        CheckMaintenanceMode::class,
         TrustProxies::class,
         HandleCors::class,
-        PreventRequestsDuringMaintenance::class,
+        //PreventRequestsDuringMaintenance::class,
         ValidatePostSize::class,
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,
+
     ];
 
     /**
@@ -58,9 +62,10 @@ class Kernel extends HttpKernel
             // AddQueuedCookiesToResponse::class,
             // StartSession::class,
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
-            // ShareErrorsFromSession::class,
+            ShareErrorsFromSession::class,
             // VerifyCsrfToken::class,
             // SubstituteBindings::class,
+            \Illuminate\Session\Middleware\StartSession::class
         ],
 
         'api' => [
@@ -85,6 +90,7 @@ class Kernel extends HttpKernel
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
-        'activityLog' => UserLastActivityLog::class
+        'activityLog' => UserLastActivityLog::class,
+        'role' => RoleMiddleware::class,
     ];
 }

@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            ToolSeeder::class,
+            //ToolSeeder::class,
             UserSeeder::class,
-            SettingsSeeder::class,
+            //SettingsSeeder::class,
         ]);
     }
 }

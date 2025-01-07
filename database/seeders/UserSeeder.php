@@ -22,7 +22,8 @@ class UserSeeder extends Seeder
             "anonymous" => false,
             "email_verified_at" => Carbon::now(),
             "last_activity" => Carbon::now(),
-            "password" => "password"
+            "password" => "password",
+            "role_id" => 1
         ]);
         $user->save();
         User::factory()->count(20)->create();
