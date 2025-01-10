@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('purge:deleted')->weekly();
+        $schedule->command("purge:unactivated")->weekly();
         $schedule->command('purge:anonymous')->weekly();
         $schedule->command("purge:saves")->weekly();
         $schedule->command('passport:purge')->monthly();
