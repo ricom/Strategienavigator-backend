@@ -38,7 +38,7 @@
 
             <div class="mb-3">
                 <label for="name" class="form-label">Benutzername</label>
-                <input type="text" class="form-control" id="name"  name="name" value="{{$user->username}}">
+                <input type="text" class="form-control" id="name"  name="name" value="{{ old('name', $user->username) }}">
                 @error('name')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
@@ -46,7 +46,7 @@
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email"  name="email" value="{{$user->email}}">
+                <input type="email" class="form-control" id="email"  name="email" value="{{ old('email', $user->email) }}">
                 @error('email')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
@@ -57,7 +57,9 @@
                 <select class="form-select" name="role">
                     @foreach($roles as $role)
                         @if($role->id == $user->role_id)
-                            <option selected value="{{$role->id}}">{{$role->name}}</option>
+                            <option value="{{$role->id}}" {{ old('role', $user->role_id) == $role->id ? 'selected' : '' }}>
+                                {{$role->name}}
+                            </option>
                         @else
                             <option value="{{$role->id}}">{{$role->name}}</option>
                         @endif
